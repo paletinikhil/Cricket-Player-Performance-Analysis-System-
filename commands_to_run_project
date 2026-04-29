@@ -1,0 +1,3 @@
+javac -cp "lib/mysql-connector-j-9.6.0.jar;src" -d out src\main\WebAppServer.java src\model\*.java src\repository\*.java src\service\*.java
+
+java -cp ".;out;lib/mysql-connector-j-9.6.0.jar" main.WebAppServer
