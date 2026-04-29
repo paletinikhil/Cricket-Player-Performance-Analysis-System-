@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Cricket Analysis Login</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<style>
+  body {
+    min-height: 100vh;
+    margin: 0;
+    background:
+      linear-gradient(rgba(9, 22, 60, 0.60), rgba(30, 8, 60, 0.68)),
+      url('images/cricket-bg.jpg') center/cover no-repeat fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  .card {
+    border-radius: 1.2rem;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(5px);
+    width: 390px;
+  }
+  .btn-group .btn.active {
+    color: #fff;
+  }
+  .headline {
+    font-weight: 700;
+    color: #13295b;
+  }
+  .subline {
+    color: #4d5a7a;
+    font-size: 0.92rem;
+  }
+  .form-label {
+    color: #10214f;
+    font-weight: 600;
+  }
+  .role-user.active {
+    background: linear-gradient(135deg, #1f78ff, #1463d8) !important;
+    border-color: #1463d8 !important;
+  }
+  .role-admin.active {
+    background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
+    border-color: #b91c1c !important;
+  }
+</style>
+</head>
+<body>
+  <div>
+    <div class="card p-4 shadow-lg">
+      <div class="text-center mb-3">
+        <h3 id="formTitle" class="headline mb-1">🏏 User Login</h3>
+        <div class="subline">Cricket Player Performance Analysis</div>
+      </div>
+      <div class="btn-group w-100 mb-3" role="group" aria-label="Form selector">
+        <button type="button" id="loginTabBtn" class="btn btn-outline-secondary active" onclick="showLoginForm()">Login</button>
+        <button type="button" id="registerTabBtn" class="btn btn-outline-secondary" onclick="showRegisterForm()">Register</button>
+      </div>
+      
+      <!-- LOGIN FORM -->
+      <div id="loginSection">
+        <div class="btn-group w-100 mb-3" role="group" aria-label="Role selector">
+          <button type="button" id="userBtn" class="btn btn-outline-primary role-user active">User</button>
+          <button type="button" id="adminBtn" class="btn btn-outline-danger role-admin">Admin</button>
+        </div>
+        <form id="loginForm">
+          <input type="hidden" id="role" value="user" />
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" required />
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" required />
+          </div>
+          <button type="submit" id="submitBtn" class="btn btn-primary w-100">Login</button>
+        </form>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="registerSection" style="display:none;">
+        <form id="registerForm">
+          <div class="mb-3">
+            <label for="regUsername" class="form-label">Username</label>
+            <input type="text" class="form-control" id="regUsername" placeholder="Choose a username" required />
+          </div>
+          <div class="mb-3">
+            <label for="regPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="regPassword" placeholder="Enter password" required />
+          </div>
+          <div class="mb-3">
+            <label for="regConfirmPassword" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="regConfirmPassword" placeholder="Confirm password" required />
+          </div>
+          <button type="submit" class="btn btn-success w-100">Create Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<script>
+let currentRole = 'user';
+
+// Tab switching functions
+function showLoginForm() {
+  document.getElementById('loginSection').style.display = 'block';
+  document.getElementById('registerSection').style.display = 'none';
+  document.getElementById('formTitle').textContent = '🏏 User Login';
+  document.getElementById('loginTabBtn').classList.add('active');
+  document.getElementById('registerTabBtn').classList.remove('active');
+}
+
+function showRegisterForm() {
+  document.getElementById('loginSection').style.display = 'none';
+  document.getElementById('registerSection').style.display = 'block';
+  document.getElementById('formTitle').textContent = '📝 Create Account';
+  document.getElementById('registerTabBtn').classList.add('active');
+  document.getElementById('loginTabBtn').classList.remove('active');
+}
+
+// Role switching for login
+document.getElementById('userBtn').onclick = () => {
+  currentRole = 'user';
+  document.getElementById('role').value = 'user';
+  document.getElementById('formTitle').textContent = '🏏 User Login';
+  document.getElementById('submitBtn').className = 'btn btn-primary w-100';
+  document.getElementById('userBtn').classList.add('active');
+  document.getElementById('adminBtn').classList.remove('active');
+  // Show register tab for users only
+  document.getElementById('registerTabBtn').style.display = 'inline-block';
+  showLoginForm(); // Reset to login form
+};
+document.getElementById('adminBtn').onclick = () => {
+  currentRole = 'admin';
+  document.getElementById('role').value = 'admin';
+  document.getElementById('formTitle').textContent = '🛡️ Admin Login';
+  document.getElementById('submitBtn').className = 'btn btn-danger w-100';
+  document.getElementById('adminBtn').classList.add('active');
+  document.getElementById('userBtn').classList.remove('active');
+  // Hide register tab for admin
+  document.getElementById('registerTabBtn').style.display = 'none';
+  showLoginForm(); // Force to login form, hide register
+};
+
+// Login form submission
+document.getElementById('loginForm').onsubmit = function(e) {
+  e.preventDefault();
+  var user = document.getElementById('username').value;
+  var pass = document.getElementById('password').value;
+  fetch('/api/login', {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: 'user='+encodeURIComponent(user)+'&pass='+encodeURIComponent(pass)+'&role='+encodeURIComponent(currentRole)
+  }).then(r=>r.text()).then(res=>{
+    if(res.startsWith('OK|')) {
+      var role = (res.split('|')[1] || '').toLowerCase();
+      if(role !== currentRole) {
+        alert('Logged in as '+role+' (not '+currentRole+')');
+      }
+      sessionStorage.setItem('user', user);
+      sessionStorage.setItem('role', role);
+      window.location = role === 'admin' ? 'admin-dashboard.html' : 'dashboard.html';
+    } else {
+      alert('Invalid credentials for '+ currentRole);
+    }
+  });
+};
+
+// Register form submission
+document.getElementById('registerForm').onsubmit = function(e) {
+  e.preventDefault();
+  var username = document.getElementById('regUsername').value;
+  var password = document.getElementById('regPassword').value;
+  var confirmPassword = document.getElementById('regConfirmPassword').value;
+  
+  if(password !== confirmPassword) {
+    alert('Passwords do not match!');
+    return;
+  }
+  
+  if(password.length < 4) {
+    alert('Password must be at least 4 characters!');
+    return;
+  }
+  
+  fetch('/api/register', {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: 'username='+encodeURIComponent(username)+'&password='+encodeURIComponent(password)
+  }).then(r=>r.text()).then(res=>{
+    if(res.startsWith('OK')) {
+      alert('Account created successfully! Please login with your new credentials.');
+      document.getElementById('regUsername').value = '';
+      document.getElementById('regPassword').value = '';
+      document.getElementById('regConfirmPassword').value = '';
+      showLoginForm();
+    } else if(res === 'DUPLICATE') {
+      alert('Username already exists! Try a different username.');
+    } else {
+      alert('Error creating account: ' + res);
+    }
+  }).catch(err => alert('Error: ' + err));
+};
+</script>
+</body>
+</html>
